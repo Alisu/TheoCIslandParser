@@ -26,7 +26,7 @@ TheoCGrammar2 class >> generate [
 TheoCGrammar2 class >> generationStrategy [ 
 	^ PPTASTGeneratorStrategy  new
 		rulesToFlatten:
-			#(crap functionCall arguments argument identifier preproc);
+			#(crap arguments argument identifier preproc);
 		rulesToIgnore: #(cFile);
 		parserPackage: #'ParserTheo2-Grammar';
 		parserClass: #TheoCParser2;

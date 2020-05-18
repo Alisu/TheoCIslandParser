@@ -2,7 +2,8 @@ Class {
 	#name : #PTASTFunctionCall,
 	#superclass : #Object,
 	#instVars : [
-		'functionCall'
+		'arguments',
+		'identifier'
 	],
 	#category : #'ParserTheo2-AST'
 }
@@ -15,7 +16,8 @@ PTASTFunctionCall >> = anObject [
 		ifTrue: [ ^ true ].
 	self class = anObject class
 		ifFalse: [ ^ false ].
-	^ functionCall = anObject functionCall
+	^ identifier = anObject identifier
+		and: [ arguments = anObject arguments ]
 ]
 
 { #category : #visiting }
@@ -48,7 +50,7 @@ PTASTFunctionCall >> functionCall: anObject [
 PTASTFunctionCall >> hash [
 	"Answer an integer value that is related to the identity of the receiver."
 
-	^ functionCall hash
+	^ identifier hash bitXor: arguments hash
 ]
 
 { #category : #accessing }

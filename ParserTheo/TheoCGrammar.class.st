@@ -83,8 +83,8 @@ TheoCGrammar >> endStatement [
 { #category : #rules }
 TheoCGrammar >> fonctionPointerDeclaration [
 	| parser |
-	parser := self type , self functionPointer
-		, self arguments , self endStatement.
+	parser := type , functionPointer
+		, arguments , endStatement.
 	^ parser.
 
 	

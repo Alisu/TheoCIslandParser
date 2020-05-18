@@ -33,6 +33,13 @@ PTCVisitor2CCallAdapter >> aStream: anObject [
 	aStream := anObject
 ]
 
+{ #category : #initialization }
+PTCVisitor2CCallAdapter >> initialize [ 
+
+	aStream := String new writeStream.
+	flag := false
+]
+
 { #category : #accessing }
 PTCVisitor2CCallAdapter >> selectorsToAdapt [
 	^ selectorsToAdapt
@@ -52,29 +59,56 @@ PTCVisitor2CCallAdapter >> visitPTASTArgument: anPTASTArgument [
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArgumentChain: aPTASTArgumentChain [
 	<generated>
-	self visitAll: aPTASTArgumentChain arguments
+	super visitAll: aPTASTArgumentChain arguments
 ]
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArguments: anPTASTArguments [
+	
+	| arguments |
+	arguments := anPTASTArguments arguments.
+	flag
+		ifTrue: [ 
+			arguments = '()'
+				ifTrue: [ ^ aStream nextPutAll: '(interpreterProxy->interpreterState)' ].
+			aStream
+				nextPutAll: arguments allButLast;
+				nextPutAll: ', interpreterProxy->interpreterState)' ]
+		ifFalse: [ aStream nextPutAll: arguments ]
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTCFile: anPTASTCFile [
 	<generated>
-	^ anPTASTArguments arguments
+	^ super visitPTASTCFile: anPTASTCFile
 ]
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTCrap: anPTASTCrap [
-	<generated>
-	^ anPTASTCrap crap
+	aStream nextPut: anPTASTCrap crap
 ]
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTFunctionCall: anPTASTFunctionCall [
 	<generated>
-	^ anPTASTFunctionCall functionCall
+	super visitPTASTFunctionCall: anPTASTFunctionCall.
+	flag := false
 ]
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTIdentifier: anPTASTIdentifier [
+		
+	| identifier |
+	identifier := anPTASTIdentifier identifier.
+	aStream nextPutAll: identifier.
+	(identifier = 'EXPORT') ifTrue:[flag := false. ^self ].
+	(selectorsToAdapt
+		anySatisfy: [ :s | ('(*' ,(CCodeGenerator new cFunctionNameFor: s selector), ')') = identifier ])
+		ifTrue: [ flag := true ]
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTPreproc: anPTASTPrepoc [
 	<generated>
-	^ anPTASTIdentifier identifier
+	^ anPTASTPrepoc identifier
 ]

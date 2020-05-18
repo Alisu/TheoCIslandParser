@@ -57,10 +57,11 @@ TheoCParser2 >> crap [
 { #category : #rules }
 TheoCParser2 >> functionCall [
 	<generated>
-	^ super functionCall flatten
+	^ super functionCall
 		==> [ :production | 
 			PTASTFunctionCall new
-				functionCall: production;
+				identifier: (production at: 1);
+				arguments: (production at: 2);
 				yourself ]
 ]
 

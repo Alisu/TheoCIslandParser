@@ -49,7 +49,8 @@ PTCVisitor2 >> visitPTASTCrap: anPTASTCrap [
 { #category : #visiting }
 PTCVisitor2 >> visitPTASTFunctionCall: anPTASTFunctionCall [
 	<generated>
-	^ anPTASTFunctionCall functionCall
+	self visit: anPTASTFunctionCall identifier.
+	self visit: anPTASTFunctionCall arguments.
 ]
 
 { #category : #visiting }
