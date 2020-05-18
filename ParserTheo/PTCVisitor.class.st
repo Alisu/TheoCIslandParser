@@ -64,7 +64,7 @@ PTCVisitor >> visitPTASTFunctionPointer: anPTASTFunctionPointer [
 { #category : #visiting }
 PTCVisitor >> visitPTASTHFile: aPTASTHFile [
 	<generated>
-	self visitAll: aPTASTHFile cFile
+	self visitAll: aPTASTHFile hFile
 
 ]
 

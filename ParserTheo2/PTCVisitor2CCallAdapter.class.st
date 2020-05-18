@@ -16,7 +16,7 @@ PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [
 	file := '/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/FilePlugin/src/common/FilePlugin.c'
 		asFileReference.
 	visitor := self new.
-	visitor selectorToAdapt: aCollection.
+	visitor selectorsToAdapt: aCollection.
 	^visitor visit: (TheoCParser2 parse: file contents).
 	
  	"file delete.
@@ -85,7 +85,9 @@ PTCVisitor2CCallAdapter >> visitPTASTCFile: anPTASTCFile [
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTCrap: anPTASTCrap [
-	aStream nextPut: anPTASTCrap crap
+	anPTASTCrap crap class = ByteString
+		ifTrue: [ aStream nextPutAll: anPTASTCrap crap ]
+		ifFalse: [ aStream nextPut: anPTASTCrap crap ]
 ]
 
 { #category : #visiting }
