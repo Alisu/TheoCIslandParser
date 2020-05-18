@@ -34,6 +34,16 @@ TheoCParser2 >> arguments [
 				yourself ]
 ]
 
+{ #category : #accessing }
+TheoCParser2 >> cFile [
+
+	^ super cFile
+		==> [ :production | 
+			PTASTCFile new
+				cFile: production;
+				yourself ]
+]
+
 { #category : #rules }
 TheoCParser2 >> crap [
 	<generated>

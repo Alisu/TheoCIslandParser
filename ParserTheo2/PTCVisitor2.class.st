@@ -34,6 +34,13 @@ PTCVisitor2 >> visitPTASTArguments: anPTASTArguments [
 ]
 
 { #category : #visiting }
+PTCVisitor2 >> visitPTASTCFile: aPTASTCFile [
+	<generated>
+	self visitAll: aPTASTCFile cFile
+
+]
+
+{ #category : #visiting }
 PTCVisitor2 >> visitPTASTCrap: anPTASTCrap [
 	<generated>
 	^ anPTASTCrap crap

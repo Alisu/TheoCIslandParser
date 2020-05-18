@@ -40,6 +40,16 @@ self assert: (((TheoCParser parse: codeToParse) hFile at: 1) class) equals: PTAS
 ]
 
 { #category : #'as yet unclassified' }
+ParserTheoTest >> testParseSimpleDeclarationWithMethodCallAsArgShouldFail [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(foo());'.
+
+self deny: ((TheoCParser parse: codeToParse) hFile size) equals: 1.
+
+]
+
+{ #category : #'as yet unclassified' }
 ParserTheoTest >> testParseSimpleDeclarationWithModifierBeforeReturnType [
 
 self flag:#Todo

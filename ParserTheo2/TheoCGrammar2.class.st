@@ -84,7 +84,7 @@ TheoCGrammar2 >> identifier [
 { #category : #rules }
 TheoCGrammar2 >> preproc [
 
-	^($# asPParser plus, Character cr asPParser negate star, Character cr asPParser plus) flatten
+	^($# asPParser plus, Character lf asPParser negate star, Character lf asPParser plus) flatten
 ]
 
 { #category : #accessing }

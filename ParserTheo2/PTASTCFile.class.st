@@ -1,42 +1,42 @@
 Class {
-	#name : #PTASTHFile,
+	#name : #PTASTCFile,
 	#superclass : #Object,
 	#instVars : [
-		'hFile'
+		'cFile'
 	],
-	#category : #'ParserTheo-Grammar'
+	#category : #'ParserTheo2-Grammar'
 }
 
 { #category : #comparing }
-PTASTHFile >> = anObject [
+PTASTCFile >> =anObject [
 "Answer whether the receiver and anObject represent the same object."
 
 	self == anObject
 		ifTrue: [ ^ true ].
 	self class = anObject class
 		ifFalse: [ ^ false ].
-	^ hFile = anObject cFile
+	^ cFile = anObject cFile
 ]
 
 { #category : #visiting }
-PTASTHFile >> acceptVisitor: aVisitor [
+PTASTCFile >> acceptVisitor: aVisitor [
 	<generated>
-	^ aVisitor visitPTASTHFile: self
+	^ aVisitor visitPTASTCFile: self
 ]
 
 { #category : #accessing }
-PTASTHFile >> hFile [
-	^ hFile
+PTASTCFile >> cFile [
+	^ cFile
 ]
 
 { #category : #accessing }
-PTASTHFile >> hFile: anObject [
-	hFile := anObject
+PTASTCFile >> cFile: anObject [
+	cFile := anObject
 ]
 
 { #category : #comparing }
-PTASTHFile >> hash [
+PTASTCFile >> hash [
 	"Answer an integer value that is related to the identity of the receiver."
 
-	^ hFile hash
+	^ cFile hash
 ]
