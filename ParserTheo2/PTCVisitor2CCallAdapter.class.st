@@ -16,8 +16,9 @@ PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [
 
 	files :=	'/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/' asFileReference allFiles select: [:f | f fullName last = $c].
 		
-	visitor := self new.
+	
 	files do:[:file |
+	visitor := self new.
 	visitor selectorsToAdapt: aCollection.
 	visitor visit: (TheoCParser2 parse: file contents).
 	
