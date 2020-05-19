@@ -69,6 +69,9 @@ PTCVisitor2CCallAdapter >> visitPTASTArguments: anPTASTArguments [
 	arguments := anPTASTArguments arguments.
 	flag
 		ifTrue: [ 
+			arguments = '(void)'
+				ifTrue: [ ^ aStream nextPutAll: arguments ].
+			self halt.
 			arguments = '()'
 				ifTrue: [ ^ aStream nextPutAll: '(interpreterProxy->interpreterState)' ].
 			aStream
@@ -105,7 +108,7 @@ PTCVisitor2CCallAdapter >> visitPTASTIdentifier: anPTASTIdentifier [
 	aStream nextPutAll: identifier.
 	(identifier = 'EXPORT') ifTrue:[flag := false. ^self ].
 	(selectorsToAdapt
-		anySatisfy: [ :s | ('(*' ,(CCodeGenerator new cFunctionNameFor: s selector), ')') = identifier ])
+		anySatisfy: [ :s | (CCodeGenerator new cFunctionNameFor: s selector) = identifier ])
 		ifTrue: [ flag := true ]
 ]
 

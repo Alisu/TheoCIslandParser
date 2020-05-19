@@ -99,3 +99,15 @@ codeToParse := 'foo(")")'.
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
 ]
+
+{ #category : #tests }
+ParserTheo2Test >> testShouldNotParseIfArgIsVoid [
+
+| codeToParse |
+self flag:#TODO.
+"Case not handled"
+codeToParse := 'foo(void)'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self deny: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
+]
