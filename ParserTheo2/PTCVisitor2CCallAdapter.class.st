@@ -12,15 +12,17 @@ Class {
 { #category : #Adapting }
 PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [ 
 
-	| file visitor |
-	file := '/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/FilePlugin/src/common/FilePlugin.c'
-		asFileReference.
+	| files visitor |
+
+	files :=	'/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/' asFileReference allFiles select: [:f | f fullName last = $c].
+		
 	visitor := self new.
+	files do:[:file |
 	visitor selectorsToAdapt: aCollection.
-	^visitor visit: (TheoCParser2 parse: file contents).
+	visitor visit: (TheoCParser2 parse: file contents).
 	
  	"file delete.
-	file writeStreamDo: [ :stream | stream << visitor aStream contents ]"
+	file writeStreamDo: [ :stream | stream << visitor aStream contents ]"]
 ]
 
 { #category : #accessing }
