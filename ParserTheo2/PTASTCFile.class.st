@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #comparing }
-PTASTCFile >> =anObject [
+PTASTCFile >> = anObject [
 "Answer whether the receiver and anObject represent the same object."
 
 	self == anObject
