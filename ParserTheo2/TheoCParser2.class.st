@@ -7,7 +7,7 @@ Class {
 { #category : #rules }
 TheoCParser2 >> argument [
 	<generated>
-	^ super argument flatten
+	^ super argument
 		==> [ :production | 
 			PTASTArgument new
 				argument: production;
@@ -30,7 +30,7 @@ TheoCParser2 >> arguments [
 	^ super arguments flatten
 		==> [ :production | 
 			PTASTArguments new
-				arguments: production;
+				arguments: (TheoCParser2 parse: production) cFile;
 				yourself ]
 ]
 

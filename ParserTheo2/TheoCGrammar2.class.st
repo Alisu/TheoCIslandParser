@@ -9,7 +9,9 @@ Class {
 		'identifier',
 		'arguments',
 		'crap',
-		'preproc'
+		'preproc',
+		'negateVoid',
+		'islandParenthesis'
 	],
 	#category : #ParserTheo2
 }
@@ -40,7 +42,7 @@ TheoCGrammar2 class >> generationStrategy [
 { #category : #rules }
 TheoCGrammar2 >> argument [
 
- ^ #blank asPParser star, (functionCall plus / #word asPParser plus / nil asPParser), #blank asPParser star
+ ^ #blank asPParser star, (arguments / islandParenthesis) star, #blank asPParser star
 ]
 
 { #category : #rules }
@@ -54,7 +56,7 @@ TheoCGrammar2 >> arguments [
 
 	| parser |
 	parser := $( asPParser, argument, argumentChain, $) asPParser.
-	^parser flatten
+	^parser
 ]
 
 { #category : #accessing }
@@ -79,6 +81,17 @@ TheoCGrammar2 >> functionCall [
 TheoCGrammar2 >> identifier [
 	^( #letter asPParser / $_ asPParser
 		, (#letter asPParser / $_ asPParser / #digit asPParser) star) flatten
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> islandParenthesis [
+	^ $) asPParser negate
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> negateVoid [
+
+	^'void' asPParser not
 ]
 
 { #category : #rules }
