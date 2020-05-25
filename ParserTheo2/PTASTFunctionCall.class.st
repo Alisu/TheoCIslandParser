@@ -36,16 +36,6 @@ PTASTFunctionCall >> arguments: anObject [
 	arguments := anObject
 ]
 
-{ #category : #accessing }
-PTASTFunctionCall >> functionCall [
-	^ functionCall
-]
-
-{ #category : #accessing }
-PTASTFunctionCall >> functionCall: anObject [
-	functionCall := anObject
-]
-
 { #category : #comparing }
 PTASTFunctionCall >> hash [
 	"Answer an integer value that is related to the identity of the receiver."

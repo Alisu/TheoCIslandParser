@@ -37,7 +37,7 @@ CCodeGenerator >> emitCCodeOn: aStream doInlining: inlineFlag doAssertions: asse
 
 	PTCVisitorHFileAdapter adaptHFile: listOfSelector.
 	PTCVisitor2CCallAdapter adaptPluginFile: listOfSelector.
-self halt.
+	self halt.
 
 	self emitCHeaderOn: aStream.
 	self emitCConstantsOn: aStream.

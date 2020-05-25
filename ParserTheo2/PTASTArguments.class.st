@@ -25,26 +25,6 @@ PTASTArguments >> acceptVisitor: aVisitor [
 ]
 
 { #category : #accessing }
-PTASTArguments >> argument [
-	^ argument
-]
-
-{ #category : #accessing }
-PTASTArguments >> argument: anObject [
-	argument := anObject
-]
-
-{ #category : #accessing }
-PTASTArguments >> argumentChain [
-	^ argumentChain
-]
-
-{ #category : #accessing }
-PTASTArguments >> argumentChain: anObject [
-	argumentChain := anObject
-]
-
-{ #category : #accessing }
 PTASTArguments >> arguments [
 	^ arguments
 ]
