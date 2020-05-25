@@ -52,3 +52,23 @@ PTASTFunctionCall >> identifier [
 PTASTFunctionCall >> identifier: anObject [
 	identifier := anObject
 ]
+
+{ #category : #testing }
+PTASTFunctionCall >> isD [
+	^ false
+]
+
+{ #category : #testing }
+PTASTFunctionCall >> isI [
+	^ false
+]
+
+{ #category : #testing }
+PTASTFunctionCall >> isO [
+	^ false
+]
+
+{ #category : #testing }
+PTASTFunctionCall >> isV [
+	^ false
+]

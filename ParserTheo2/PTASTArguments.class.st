@@ -40,3 +40,26 @@ PTASTArguments >> hash [
 
 	^ arguments hash
 ]
+
+{ #category : #testing }
+PTASTArguments >> isNil [
+	"Supposed we have ()"
+
+	arguments size = 2 ifTrue:[^true].
+	^false
+										
+
+]
+
+{ #category : #testing }
+PTASTArguments >> isVoid [
+	"Supposed we have (void)"
+
+	arguments size = 6
+		ifTrue: [ (arguments at: 2) isV
+				ifTrue: [ (arguments at: 3) isO
+						ifTrue: [ (arguments at: 4) isI
+								ifTrue: [ (arguments at: 5) isD
+										ifTrue: [ ^ true ] ] ] ] ].
+	^ false
+]

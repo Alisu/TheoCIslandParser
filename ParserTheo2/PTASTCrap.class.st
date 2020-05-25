@@ -40,3 +40,31 @@ PTASTCrap >> hash [
 
 	^ crap hash
 ]
+
+{ #category : #accessing }
+PTASTCrap >> isD [
+	crap = 'D'
+		ifTrue: [ ^ true ].
+	^ false
+]
+
+{ #category : #accessing }
+PTASTCrap >> isI [ 
+	crap = 'i'
+		ifTrue: [ ^ true ].
+	^ false
+]
+
+{ #category : #accessing }
+PTASTCrap >> isO [ 
+	crap = 'o'
+		ifTrue: [ ^ true ].
+	^ false
+]
+
+{ #category : #accessing }
+PTASTCrap >> isV [
+	crap = 'v'
+		ifTrue: [ ^ true ].
+	^ false
+]

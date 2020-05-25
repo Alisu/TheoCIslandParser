@@ -4,26 +4,42 @@ Class {
 	#instVars : [
 		'aStream',
 		'selectorsToAdapt',
-		'flag'
+		'flag',
+		'codeGenerator'
 	],
 	#category : #'ParserTheo2-Visitor'
 }
 
 { #category : #Adapting }
-PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [ 
-
+PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [
 	| files visitor |
+	files := '/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/'
+		asFileReference allFiles select: [ :f | f fullName last = $c ].
+	files
+		do: [ :file | 
+			file fullName
+				=
+					'/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/LocalePlugin/src/unix/sqUnixLocale.c'
+				ifFalse: [ 
+					visitor := self new.
+					visitor selectorsToAdapt: aCollection.
+					visitor visit: (TheoCParser2 parse: file contents) ]
+				"file delete.
+	file writeStreamDo: [ :stream | stream << visitor aStream contents ]" ]
+]
 
-	files :=	'/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/' asFileReference allFiles select: [:f | f fullName last = $c].
-		
+{ #category : #Adapting }
+PTCVisitor2CCallAdapter class >> adaptPluginFiles: aCollection [
+	| file visitor |
+	file := '/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/B2DPlugin/src/common/B2DPlugin.c'
+		asFileReference.
 	
-	files do:[:file |
 	visitor := self new.
 	visitor selectorsToAdapt: aCollection.
 	visitor visit: (TheoCParser2 parse: file contents).
-	
- 	"file delete.
-	file writeStreamDo: [ :stream | stream << visitor aStream contents ]"]
+	self halt.
+	"file delete.
+	file writeStreamDo: [ :stream | stream << visitor aStream contents ]"
 ]
 
 { #category : #accessing }
@@ -40,6 +56,7 @@ PTCVisitor2CCallAdapter >> aStream: anObject [
 PTCVisitor2CCallAdapter >> initialize [ 
 
 	aStream := String new writeStream.
+	codeGenerator := CCodeGenerator new.
 	flag := false
 ]
 
@@ -68,19 +85,13 @@ PTCVisitor2CCallAdapter >> visitPTASTArgumentChain: aPTASTArgumentChain [
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArguments: anPTASTArguments [
 	
-	| arguments |
-	arguments := anPTASTArguments arguments.
 	flag
 		ifTrue: [ 
-			arguments = '(void)'
-				ifTrue: [ ^ aStream nextPutAll: arguments ].
-			self halt.
-			arguments = '()'
-				ifTrue: [ ^ aStream nextPutAll: '(interpreterProxy->interpreterState)' ].
-			aStream
-				nextPutAll: arguments allButLast;
-				nextPutAll: ', interpreterProxy->interpreterState)' ]
-		ifFalse: [ aStream nextPutAll: arguments ]
+			anPTASTArguments isNil
+				ifTrue: [ anPTASTArguments arguments add: (PTASTCrap new crap: 'interpreterProxy->interpreterState') before:anPTASTArguments arguments last ].
+			anPTASTArguments isVoid
+			ifFalse: [ anPTASTArguments arguments add: (PTASTCrap new crap: ', interpreterProxy->interpreterState') before:anPTASTArguments arguments last ] ].
+		self visitAll: anPTASTArguments arguments.
 ]
 
 { #category : #visiting }
@@ -111,7 +122,7 @@ PTCVisitor2CCallAdapter >> visitPTASTIdentifier: anPTASTIdentifier [
 	aStream nextPutAll: identifier.
 	(identifier = 'EXPORT') ifTrue:[flag := false. ^self ].
 	(selectorsToAdapt
-		anySatisfy: [ :s | (CCodeGenerator new cFunctionNameFor: s selector) = identifier ])
+		anySatisfy: [ :s | (codeGenerator cFunctionNameFor: s selector) = identifier ])
 		ifTrue: [ flag := true ]
 ]
 
