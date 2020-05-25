@@ -5,6 +5,18 @@ Class {
 }
 
 { #category : #tests }
+ParserTheo2Test >> testFunctionCallsInArgsAreFunctionCalls [
+
+| codeToParse firstFunctionCall |
+
+codeToParse := 'loadCompressedShapesegmentsleftFillsrightFillslineWidthslineFillsfillIndexListpointShort(firstIndexableField(points), nSegments, firstIndexableField(leftFills), firstIndexableField(rightFills), firstIndexableField(lineWidths), firstIndexableField(lineFills), firstIndexableField(fillIndexList), pointsShort);'.
+
+firstFunctionCall := (TheoCParser2 parse: codeToParse) cFile at: 1.
+self assert: (firstFunctionCall arguments arguments select: [ :e | e class = PTASTFunctionCall ]) size equals: 6.
+
+]
+
+{ #category : #tests }
 ParserTheo2Test >> testParseComplexCall [
 
 | codeToParse |
@@ -82,7 +94,7 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTA
 ParserTheo2Test >> testParseSimpleCallWithFunctionCallAsArg [
 
 | codeToParse |
-codeToParse := 'foo(bar(), pouet)'.
+codeToParse := 'foo(pouet, nbar())'.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
