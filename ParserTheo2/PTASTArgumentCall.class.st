@@ -1,42 +1,42 @@
 Class {
-	#name : #PTASTArguments,
+	#name : #PTASTArgumentCall,
 	#superclass : #Object,
 	#instVars : [
-		'arguments'
+		'argument'
 	],
 	#category : #'ParserTheo2-AST'
 }
 
 { #category : #comparing }
-PTASTArguments >> = anObject [
+PTASTArgumentCall >> = anObject [
 	"Answer whether the receiver and anObject represent the same object."
 
 	self == anObject
 		ifTrue: [ ^ true ].
 	self class = anObject class
 		ifFalse: [ ^ false ].
-	^ arguments = anObject arguments
+	^ argument = anObject argument
 ]
 
 { #category : #visiting }
-PTASTArguments >> acceptVisitor: aVisitor [
+PTASTArgumentCall >> acceptVisitor: aVisitor [
 	<generated>
-	^ aVisitor visitPTASTArguments: self
+	^ aVisitor visitPTASTArgument: self
 ]
 
 { #category : #accessing }
-PTASTArguments >> arguments [
-	^ arguments
+PTASTArgumentCall >> argument [
+	^ argument
 ]
 
 { #category : #accessing }
-PTASTArguments >> arguments: anObject [
-	arguments := anObject
+PTASTArgumentCall >> argument: anObject [
+	argument := anObject
 ]
 
 { #category : #comparing }
-PTASTArguments >> hash [
+PTASTArgumentCall >> hash [
 	"Answer an integer value that is related to the identity of the receiver."
 
-	^ arguments hash
+	^ argument hash
 ]

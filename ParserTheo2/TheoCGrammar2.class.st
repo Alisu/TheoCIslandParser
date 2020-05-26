@@ -4,14 +4,20 @@ Class {
 	#instVars : [
 		'cFile',
 		'functionCall',
-		'argument',
-		'argumentChain',
 		'identifier',
-		'arguments',
 		'crap',
 		'preproc',
-		'negateVoid',
-		'islandParenthesis'
+		'islandParenthesis',
+		'argumentCall',
+		'argumentsCall',
+		'fonctionPointerDeclaration',
+		'functionDeclaration',
+		'type',
+		'functionPointer',
+		'arguments',
+		'endStatement',
+		'argument',
+		'argumentChain'
 	],
 	#category : #ParserTheo2
 }
@@ -28,8 +34,8 @@ TheoCGrammar2 class >> generate [
 TheoCGrammar2 class >> generationStrategy [ 
 	^ PPTASTGeneratorStrategy  new
 		rulesToFlatten:
-			#(crap arguments argument identifier preproc);
-		rulesToIgnore: #(cFile);
+			#(crap identifier preproc);
+		rulesToIgnore: #();
 		parserPackage: #'ParserTheo2-Grammar';
 		parserClass: #TheoCParser2;
 		astPackage: #'ParserTheo2-AST'; 
@@ -39,30 +45,47 @@ TheoCGrammar2 class >> generationStrategy [
 		yourself
 ]
 
-{ #category : #rules }
+{ #category : #accessing }
 TheoCGrammar2 >> argument [
-
- ^ #blank asPParser star, (arguments / islandParenthesis) star, #blank asPParser star
+	| parser |
+	parser := (type
+		, #word asPParser plus) / type plus / nil asPParser.
+	^ parser
 ]
 
 { #category : #rules }
+TheoCGrammar2 >> argumentCall [
+
+ ^ #blank asPParser star, (argumentsCall / islandParenthesis) star, #blank asPParser star
+]
+
+{ #category : #accessing }
 TheoCGrammar2 >> argumentChain [
+	| parser |
+	parser := ($, asPParser, #blank asPParser star, argument)
+		star.
+	^ parser
+]
 
-	^($, asPParser, #blank asPParser star , argument) star.
+{ #category : #accessing }
+TheoCGrammar2 >> arguments [
+	| parser |
+	parser := #blank asPParser star, $( asPParser , argument, argumentChain, $) asPParser.
+	^ parser flatten
 ]
 
 { #category : #rules }
-TheoCGrammar2 >> arguments [
+TheoCGrammar2 >> argumentsCall [
 
 	| parser |
-	parser := $( asPParser, argument, argumentChain, $) asPParser.
+	parser := $( asPParser, argumentCall ,$) asPParser.
 	^parser
 ]
 
 { #category : #accessing }
 TheoCGrammar2 >> cFile [
 
-	^ (functionCall / crap) star
+	^ (fonctionPointerDeclaration / functionDeclaration / functionCall / crap) star
 	
 ]
 
@@ -71,10 +94,42 @@ TheoCGrammar2 >> crap [
 	^preproc / #any asPParser 
 ]
 
+{ #category : #accessing }
+TheoCGrammar2 >> endStatement [
+	| parser |
+	parser := #blank asPParser star, $; asPParser.
+	^ parser flatten
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> fonctionPointerDeclaration [
+	| parser |
+	parser := type , functionPointer
+		, arguments , endStatement.
+	^ parser.
+]
+
 { #category : #rules }
 TheoCGrammar2 >> functionCall [
 
-	^ identifier, arguments
+	^ identifier, argumentsCall
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> functionDeclaration [
+		| parser |
+	parser := type , identifier
+		, arguments , endStatement.
+	^ parser.
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> functionPointer [
+	| parser |
+	
+	parser := $( asPParser , $* asPParser , identifier
+		, $) asPParser.
+	^ parser flatten
 ]
 
 { #category : #rules }
@@ -88,12 +143,6 @@ TheoCGrammar2 >> islandParenthesis [
 	^ $) asPParser negate
 ]
 
-{ #category : #accessing }
-TheoCGrammar2 >> negateVoid [
-
-	^'void' asPParser not
-]
-
 { #category : #rules }
 TheoCGrammar2 >> preproc [
 
@@ -105,4 +154,11 @@ TheoCGrammar2 >> start [
 	"Answer the production to start this parser with."
 	
 	^self cFile
+]
+
+{ #category : #accessing }
+TheoCGrammar2 >> type [
+	| parser |
+	parser := #word asPParser plus, #blank asPParser star, $* asPParser optional, #blank asPParser star.
+	^ parser flatten
 ]

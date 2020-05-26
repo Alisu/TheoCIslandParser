@@ -1,6 +1,6 @@
 Extension { #name : #CCodeGenerator }
 
-{ #category : #'*ParserTheo' }
+{ #category : #'*ParserTheo2' }
 CCodeGenerator >> emitCCodeOn: aStream doInlining: inlineFlag doAssertions: assertionFlag [
 	"Emit C code for all methods in the code base onto the given stream. All inlined method calls should already have been expanded."
 
@@ -35,8 +35,8 @@ CCodeGenerator >> emitCCodeOn: aStream doInlining: inlineFlag doAssertions: asse
     (aMethod isRealMethod 
         and: [ (self shouldGenerateMethod: aMethod)])]).
 
-	PTCVisitorHFileAdapter adaptHFile: listOfSelector.
-	PTCVisitor2CCallAdapter adaptPluginFile: listOfSelector.
+	"PTCVisitorHFileAdapter adaptHFile: listOfSelector."
+	PTCVisitor2CCallAdapter adaptPluginFiles: listOfSelector.
 	self halt.
 
 	self emitCHeaderOn: aStream.

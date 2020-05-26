@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'functionPointer'
 	],
-	#category : #'ParserTheo-AST'
+	#category : #'ParserTheo2-AST'
 }
 
 { #category : #comparing }

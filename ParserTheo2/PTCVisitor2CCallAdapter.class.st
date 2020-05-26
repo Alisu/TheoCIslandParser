@@ -77,21 +77,43 @@ PTCVisitor2CCallAdapter >> visitPTASTArgument: anPTASTArgument [
 ]
 
 { #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTArgumentCall: anPTASTArgumentCall [
+	<generated>
+	^ anPTASTArgumentCall argument
+]
+
+{ #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArgumentChain: aPTASTArgumentChain [
 	<generated>
 	super visitAll: aPTASTArgumentChain arguments
 ]
 
 { #category : #visiting }
-PTCVisitor2CCallAdapter >> visitPTASTArguments: anPTASTArguments [
+PTCVisitor2CCallAdapter >> visitPTASTArguments: aPTASTArguments [
+	<generated>
+	| arguments |
+	arguments := aPTASTArguments arguments.
+	flag
+		ifTrue: [ arguments = '(void)'
+				ifTrue: [ ^ aStream nextPutAll: '(struct foo * self)' ].
+			arguments = '()'
+				ifTrue: [ ^ aStream nextPutAll: '(struct foo * self)' ].
+			aStream
+				nextPutAll: arguments allButLast;
+				nextPutAll: ', struct foo * self)' ]
+		ifFalse: [ aStream nextPutAll: arguments ]
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTArgumentsCall: anPTASTArgumentsCall [
 	
 	flag
 		ifTrue: [ 
-			anPTASTArguments isNil
-				ifTrue: [ anPTASTArguments arguments add: (PTASTCrap new crap: 'interpreterProxy->interpreterState') before:anPTASTArguments arguments last ].
-			anPTASTArguments isVoid
-			ifFalse: [ anPTASTArguments arguments add: (PTASTCrap new crap: ', interpreterProxy->interpreterState') before:anPTASTArguments arguments last ] ].
-		self visitAll: anPTASTArguments arguments.
+			anPTASTArgumentsCall isNil
+				ifTrue: [ anPTASTArgumentsCall arguments add: (PTASTCrap new crap: 'interpreterProxy->interpreterState') before: anPTASTArgumentsCall arguments last ].
+			anPTASTArgumentsCall isVoid
+			ifFalse: [ anPTASTArgumentsCall arguments add: (PTASTCrap new crap: ', interpreterProxy->interpreterState') before: anPTASTArgumentsCall arguments last ] ].
+		self visitAll: anPTASTArgumentsCall arguments.
 ]
 
 { #category : #visiting }
@@ -108,10 +130,40 @@ PTCVisitor2CCallAdapter >> visitPTASTCrap: anPTASTCrap [
 ]
 
 { #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTEndStatement: anPTASTEndStatement [
+	aStream nextPutAll: anPTASTEndStatement endStatement.
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTFonctionPointerDeclaration: aPTASTFonctionPointerDeclaration [
+	super
+		visitPTASTFonctionPointerDeclaration: aPTASTFonctionPointerDeclaration.
+	flag := false
+]
+
+{ #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTFunctionCall: anPTASTFunctionCall [
 	<generated>
 	super visitPTASTFunctionCall: anPTASTFunctionCall.
 	flag := false
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTFunctionDeclaration: aPTASTFunctionDeclaration [
+	super
+		visitPTASTFunctionDeclaration: aPTASTFunctionDeclaration.
+	flag := false
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTFunctionPointer: anPTASTFunctionPointer [
+	<generated>
+	| functionPointerName |
+	functionPointerName := anPTASTFunctionPointer functionPointer.
+	aStream nextPutAll: functionPointerName.
+	(selectorsToAdapt
+		anySatisfy: [ :s | ('(*' ,(codeGenerator cFunctionNameFor: s selector), ')') = functionPointerName ])
+		ifTrue: [ flag := true ]
 ]
 
 { #category : #visiting }
@@ -130,4 +182,10 @@ PTCVisitor2CCallAdapter >> visitPTASTIdentifier: anPTASTIdentifier [
 PTCVisitor2CCallAdapter >> visitPTASTPreproc: anPTASTPrepoc [
 	<generated>
 	^ anPTASTPrepoc identifier
+]
+
+{ #category : #visiting }
+PTCVisitor2CCallAdapter >> visitPTASTType: anPTASTType [
+	<generated>
+	aStream nextPutAll: anPTASTType type.
 ]

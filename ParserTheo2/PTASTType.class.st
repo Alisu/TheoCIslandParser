@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'type'
 	],
-	#category : #'ParserTheo-AST'
+	#category : #'ParserTheo2-AST'
 }
 
 { #category : #comparing }

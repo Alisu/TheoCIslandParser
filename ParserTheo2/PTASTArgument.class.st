@@ -15,7 +15,7 @@ PTASTArgument >> = anObject [
 		ifTrue: [ ^ true ].
 	self class = anObject class
 		ifFalse: [ ^ false ].
-	^ argument = anObject argument
+	^ argument = anObject arguments
 ]
 
 { #category : #visiting }

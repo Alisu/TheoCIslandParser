@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'endStatement'
 	],
-	#category : #'ParserTheo-AST'
+	#category : #'ParserTheo2-AST'
 }
 
 { #category : #comparing }

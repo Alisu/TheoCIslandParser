@@ -29,6 +29,16 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTA
 ]
 
 { #category : #tests }
+ParserTheo2Test >> testParseCrapIntoCrap [
+
+| codeToParse |
+codeToParse := '/* InterpreterProxy methodsFor: special objects */'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: codeToParse size.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTCrap.
+]
+
+{ #category : #tests }
 ParserTheo2Test >> testParsePreprocessorIntoCrap [
 
 | codeToParse |
@@ -110,6 +120,154 @@ codeToParse := 'foo(")")'.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclaration [
+
+| codeToParse |
+codeToParse := 'sqInt classString(void);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionDeclaration.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithFonctionPointerAsArgument [
+
+self flag:#Todo
+"Case not handled"
+
+"| codeToParse |
+codeToParse := 'sqInt  (*positive32BitIntegerFor)(unsigned int integerValue);'.
+
+self assert: ((TheoCParser parse: codeToParse) hFile size) equals: 1.
+self assert: (((TheoCParser parse: codeToParse) hFile at: 1) class) equals: PTASTFonctionPointerDeclaration."
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithMethodCallAsArgShouldFail [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(foo());'.
+
+self deny: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithModifierBeforeReturnType [
+
+self flag:#Todo
+"Case not handled"
+
+"| codeToParse |
+codeToParse := 'volatile usqLong (*utcMicroseconds)(void);'.
+
+self assert: ((TheoCParser parse: codeToParse) hFile size) equals: 1.
+self assert: (((TheoCParser parse: codeToParse) hFile at: 1) class) equals: PTASTFonctionPointerDeclaration."
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithModifierInArguments [
+
+self flag:#Todo
+"Case not handled"
+
+"| codeToParse |
+codeToParse := 'volatile usqLong (*utcMicroseconds)(void);'.
+
+self assert: ((TheoCParser parse: codeToParse) hFile size) equals: 1.
+self assert: (((TheoCParser parse: codeToParse) hFile at: 1) class) equals: PTASTFonctionPointerDeclaration."
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithNonNamedArguments [
+
+| codeToParse |
+codeToParse := 'sqInt (*returnAsThroughCallbackContext)(int, vmccp, sqInt);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFonctionPointerDeclaration.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithOneArgument [
+
+| codeToParse |
+codeToParse := 'sqInt  (*pop)(sqInt nItems);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFonctionPointerDeclaration.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithTwoArguments [
+
+| codeToParse |
+codeToParse := 'sqInt  (*popthenPush)(sqInt nItems, sqInt oop);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFonctionPointerDeclaration.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithreturnTypeBeingPointer [
+
+| codeToParse |
+codeToParse := 'void  *(*arrayValueOf)(sqInt oop);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFonctionPointerDeclaration.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimplePointerDeclaration [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(void);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFonctionPointerDeclaration.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseTwoSimpleDeclaration [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(void);sqInt (*classSmallInteger)(void);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 2.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseTwoSimpleDeclarationWithBlankBetween [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(void); sqInt (*classSmallInteger)(void);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 3.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTASTCrap.
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseTwoSimpleDeclarationWithCrBetween [
+
+| codeToParse |
+codeToParse := 'sqInt (*classString)(void);
+sqInt (*classSmallInteger)(void);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 3.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTASTCrap.
+
 ]
 
 { #category : #tests }
