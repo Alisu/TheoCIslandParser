@@ -15,17 +15,19 @@ PTCVisitor2CCallAdapter class >> adaptPluginFile: aCollection [
 	| files visitor |
 	files := '/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/'
 		asFileReference allFiles select: [ :f | f fullName last = $c ].
+	visitor := self new.
 	files
 		do: [ :file | 
 			file fullName
 				=
 					'/Users/theo/openSMVM/opensmalltalk-vm-1/extracted/plugins/LocalePlugin/src/unix/sqUnixLocale.c'
 				ifFalse: [ 
-					visitor := self new.
+					visitor aStream: String new writeStream.
 					visitor selectorsToAdapt: aCollection.
-					visitor visit: (TheoCParser2 parse: file contents) ]
-				"file delete.
-	file writeStreamDo: [ :stream | stream << visitor aStream contents ]" ]
+					visitor visit: (TheoCParser2 parse: file contents) ].
+			file delete.
+			file
+				writeStreamDo: [ :stream | stream << visitor aStream contents ] ]
 ]
 
 { #category : #Adapting }
@@ -106,14 +108,16 @@ PTCVisitor2CCallAdapter >> visitPTASTArguments: aPTASTArguments [
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArgumentsCall: anPTASTArgumentsCall [
-	
 	flag
-		ifTrue: [ 
-			anPTASTArgumentsCall isNil
-				ifTrue: [ anPTASTArgumentsCall arguments add: (PTASTCrap new crap: 'interpreterProxy->interpreterState') before: anPTASTArgumentsCall arguments last ].
-			anPTASTArgumentsCall isVoid
-			ifFalse: [ anPTASTArgumentsCall arguments add: (PTASTCrap new crap: ', interpreterProxy->interpreterState') before: anPTASTArgumentsCall arguments last ] ].
-		self visitAll: anPTASTArgumentsCall arguments.
+		ifTrue: [ anPTASTArgumentsCall isNull
+				ifTrue: [ anPTASTArgumentsCall arguments
+						add: (PTASTCrap new crap: 'interpreterProxy->interpreterState')
+						before: anPTASTArgumentsCall arguments last ]
+				ifFalse: [ anPTASTArgumentsCall isVoid
+						ifFalse: [ anPTASTArgumentsCall arguments
+								add: (PTASTCrap new crap: ', interpreterProxy->interpreterState')
+								before: anPTASTArgumentsCall arguments last ] ] ].
+	self visitAll: anPTASTArgumentsCall arguments
 ]
 
 { #category : #visiting }
@@ -144,6 +148,7 @@ PTCVisitor2CCallAdapter >> visitPTASTFonctionPointerDeclaration: aPTASTFonctionP
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTFunctionCall: anPTASTFunctionCall [
 	<generated>
+	self halt.
 	super visitPTASTFunctionCall: anPTASTFunctionCall.
 	flag := false
 ]

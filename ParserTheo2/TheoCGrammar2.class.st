@@ -17,7 +17,8 @@ Class {
 		'arguments',
 		'endStatement',
 		'argument',
-		'argumentChain'
+		'argumentChain',
+		'modifier'
 	],
 	#category : #ParserTheo2
 }
@@ -47,9 +48,10 @@ TheoCGrammar2 class >> generationStrategy [
 
 { #category : #accessing }
 TheoCGrammar2 >> argument [
+"We do not parse nil (aka '()' ) because we do not encounter it in definition and it poses problem after "
 	| parser |
 	parser := (type
-		, #word asPParser plus) / type plus / nil asPParser.
+		, #word asPParser plus) / type plus "/ nil asPParser".
 	^ parser
 ]
 
@@ -104,7 +106,7 @@ TheoCGrammar2 >> endStatement [
 { #category : #accessing }
 TheoCGrammar2 >> fonctionPointerDeclaration [
 	| parser |
-	parser := type , functionPointer
+	parser := type optional, functionPointer
 		, arguments , endStatement.
 	^ parser.
 ]
@@ -118,7 +120,7 @@ TheoCGrammar2 >> functionCall [
 { #category : #accessing }
 TheoCGrammar2 >> functionDeclaration [
 		| parser |
-	parser := type , identifier
+	parser := "type optional," identifier
 		, arguments , endStatement.
 	^ parser.
 ]
@@ -143,6 +145,12 @@ TheoCGrammar2 >> islandParenthesis [
 	^ $) asPParser negate
 ]
 
+{ #category : #accessing }
+TheoCGrammar2 >> modifier [
+"The only two i met and need to parse for the moment"
+	^('unsigned' asPParser / 'volatile' asPParser), #blank asPParser plus
+]
+
 { #category : #rules }
 TheoCGrammar2 >> preproc [
 
@@ -159,6 +167,6 @@ TheoCGrammar2 >> start [
 { #category : #accessing }
 TheoCGrammar2 >> type [
 	| parser |
-	parser := #word asPParser plus, #blank asPParser star, $* asPParser optional, #blank asPParser star.
+	parser := modifier optional, #blank asPParser star, #word asPParser plus, #blank asPParser star, $* asPParser optional, #blank asPParser star.
 	^ parser flatten
 ]

@@ -42,7 +42,7 @@ PTASTArgumentsCall >> hash [
 ]
 
 { #category : #testing }
-PTASTArgumentsCall >> isNil [
+PTASTArgumentsCall >> isNull [
 	"Supposed we have ()"
 
 	arguments size = 2 ifTrue:[^true].

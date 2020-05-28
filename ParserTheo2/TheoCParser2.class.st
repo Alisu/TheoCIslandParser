@@ -114,10 +114,13 @@ TheoCParser2 >> functionDeclaration [
 	^ super functionDeclaration
 		==> [ :production | 
 			PTASTFunctionDeclaration new
-				type: (production at: 1);
+				"type: (production at: 1);
 				identifier: (production at: 2);
 				arguments: (production at: 3);
-				endStatement: (production at: 4);
+				endStatement: (production at: 4);"
+				identifier: (production at: 1);
+				arguments: (production at: 2);
+				endStatement: (production at: 3);
 				yourself ]
 ]
 
