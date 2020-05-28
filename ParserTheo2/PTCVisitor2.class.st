@@ -83,12 +83,14 @@ PTCVisitor2 >> visitPTASTFunctionCall: anPTASTFunctionCall [
 { #category : #visiting }
 PTCVisitor2 >> visitPTASTFunctionDeclaration: anPTASTFunctionDeclaration [
 
-	anPTASTFunctionDeclaration type type = 'return '
-		ifTrue: [ | return functionCall |
+"contains return mean we are dommed if someone declared a type like sqForeturn " 
+	(anPTASTFunctionDeclaration type type includesSubstring: 'return ')
+		ifTrue: [ | return functionCall argumentsCall|
 			return := PTASTCrap new crap: anPTASTFunctionDeclaration type type.
+			argumentsCall := PTASTArgumentsCall new arguments: (TheoCParser2 parse: anPTASTFunctionDeclaration arguments arguments) cFile.
 			functionCall := PTASTFunctionCall new
 				identifier: anPTASTFunctionDeclaration identifier;
-				arguments: anPTASTFunctionDeclaration arguments.
+				arguments: argumentsCall.
 			self visit: return.
 			self visit: functionCall ]
 		ifFalse: [ self visit: anPTASTFunctionDeclaration type.

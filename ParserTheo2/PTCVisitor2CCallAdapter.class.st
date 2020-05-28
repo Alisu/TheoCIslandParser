@@ -108,6 +108,7 @@ PTCVisitor2CCallAdapter >> visitPTASTArguments: aPTASTArguments [
 
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTArgumentsCall: anPTASTArgumentsCall [
+
 	flag
 		ifTrue: [ anPTASTArgumentsCall isNull
 				ifTrue: [ anPTASTArgumentsCall arguments
@@ -116,7 +117,7 @@ PTCVisitor2CCallAdapter >> visitPTASTArgumentsCall: anPTASTArgumentsCall [
 				ifFalse: [ anPTASTArgumentsCall isVoid
 						ifFalse: [ anPTASTArgumentsCall arguments
 								add: (PTASTCrap new crap: ', interpreterProxy->interpreterState')
-								before: anPTASTArgumentsCall arguments last ] ] ].
+								beforeIndex: anPTASTArgumentsCall arguments size] ] ].
 	self visitAll: anPTASTArgumentsCall arguments
 ]
 
