@@ -85,6 +85,16 @@ TheoCParser2 >> endStatement [
 ]
 
 { #category : #accessing }
+TheoCParser2 >> export [
+	<generated>
+	^ super export flatten
+		==> [ :production | 
+			PTASTType new
+				type: production;
+				yourself ]
+]
+
+{ #category : #accessing }
 TheoCParser2 >> fonctionPointerDeclaration [
 	<generated>
 	^ super fonctionPointerDeclaration
@@ -112,15 +122,12 @@ TheoCParser2 >> functionCall [
 TheoCParser2 >> functionDeclaration [
 	<generated>
 	^ super functionDeclaration
-		==> [ :production | 
+		==> [ :production |
 			PTASTFunctionDeclaration new
-				"type: (production at: 1);
+				type: (production at: 1);
 				identifier: (production at: 2);
 				arguments: (production at: 3);
-				endStatement: (production at: 4);"
-				identifier: (production at: 1);
-				arguments: (production at: 2);
-				endStatement: (production at: 3);
+				endStatement: (production at: 4);
 				yourself ]
 ]
 

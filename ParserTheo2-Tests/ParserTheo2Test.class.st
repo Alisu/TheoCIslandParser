@@ -1,20 +1,8 @@
 Class {
 	#name : #ParserTheo2Test,
 	#superclass : #TestCase,
-	#category : #'ParserTheo2-Test'
+	#category : #'ParserTheo2-Tests'
 }
-
-{ #category : #tests }
-ParserTheo2Test >> testFunctionCallsInArgsAreFunctionCalls [
-
-| codeToParse firstFunctionCall |
-
-codeToParse := 'loadCompressedShapesegmentsleftFillsrightFillslineWidthslineFillsfillIndexListpointShort(firstIndexableField(points), nSegments, firstIndexableField(leftFills), firstIndexableField(rightFills), firstIndexableField(lineWidths), firstIndexableField(lineFills), firstIndexableField(fillIndexList), pointsShort);'.
-
-firstFunctionCall := (TheoCParser2 parse: codeToParse) cFile at: 1.
-self assert: (firstFunctionCall arguments arguments select: [ :e | e class = PTASTFunctionCall ]) size equals: 6.
-
-]
 
 { #category : #tests }
 ParserTheo2Test >> testParseComplexCall [
@@ -72,11 +60,9 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTA
 ParserTheo2Test >> testParsePreprocessorIntoCrap2 [
 
 | codeToParse code1 code2 |
-code1 := '/* Default EXPORT macro that does nothing (see comment in sq.h): */
-'.
-code2 :='#define EXPORT(returnType) returnType
-'.
-codeToParse := code1, code2.
+code1 := '/* Default EXPORT macro that does nothing (see comment in sq.h): */'.
+code2 :='#define EXPORT(returnType) returnType'.
+codeToParse := code1, Character lf asString, code2.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: code1 size + 1 .
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: code1 size + 1 ) class) equals: PTASTCrap.
@@ -90,27 +76,6 @@ codeToParse := 'foo()'.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
-]
-
-{ #category : #tests }
-ParserTheo2Test >> testParseSimpleCallInIf [
-
-| codeToParse selector visitor |
-codeToParse := 'if (failed()) {
-		return null;
-	}'.
-
-selector := OrderedCollection new.
-selector add: (Selector new selector: 'failed').
-visitor := PTCVisitor2CCallAdapter new.
-visitor aStream: String new writeStream.
-visitor selectorsToAdapt: selector.
-visitor visit: (TheoCParser2 parse: codeToParse).
-
-self assert: visitor aStream contents equals: 'if (failed(interpreterProxy->interpreterState)) {
-		return null;
-	}'
-
 ]
 
 { #category : #tests }
@@ -156,16 +121,6 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTA
 ]
 
 { #category : #tests }
-ParserTheo2Test >> testParseSimpleCallWithReturnBefore [
-	| codeToParse |
-	codeToParse := 'return primitiveFail();'.
-	self deny: (TheoCParser2 parse: codeToParse) cFile size equals: 1.
-	self
-		assert: ((TheoCParser2 parse: codeToParse) cFile at: 8) class
-		equals: PTASTFunctionCall
-]
-
-{ #category : #tests }
 ParserTheo2Test >> testParseSimpleDeclaration [
 
 | codeToParse |
@@ -181,8 +136,8 @@ ParserTheo2Test >> testParseSimpleDeclarationWithEXPORTBefore [
 | codeToParse |
 codeToParse := 'EXPORT(sqInt) moduleUnloaded(char *aModuleName);'.
 
-self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 3.
-self assert: (((TheoCParser2 parse: codeToParse) cFile at: 3) class) equals: PTASTFunctionDeclaration.
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionDeclaration.
 ]
 
 { #category : #tests }
@@ -306,8 +261,8 @@ ParserTheo2Test >> testParseTwoSimpleDeclarationWithBlankBetween [
 | codeToParse |
 codeToParse := 'sqInt (*classString)(void); sqInt (*classSmallInteger)(void);'.
 
-self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 3.
-self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTASTCrap.
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 2.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTASTFonctionPointerDeclaration.
 
 ]
 
@@ -324,13 +279,54 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTA
 ]
 
 { #category : #tests }
-ParserTheo2Test >> testShouldNotParseIfArgIsVoid [
+ParserTheo2Test >> testVisitFunctionCallsInArgsAreFunctionCalls [
+	| codeToParse selector visitor |
+	codeToParse := 'loadCompressedShapesegmentsleftFillsrightFillslineWidthslineFillsfillIndexListpointShort(firstIndexableField(points), nSegments, firstIndexableField(leftFills), firstIndexableField(rightFills), firstIndexableField(lineWidths), firstIndexableField(lineFills), firstIndexableField(fillIndexList), pointsShort);'.
+	selector := OrderedCollection new.
+	selector add: (Selector new selector: 'firstIndexableField').
+	visitor := PTCVisitor2CCallAdapter new.
+	visitor aStream: String new writeStream.
+	visitor selectorsToAdapt: selector.
+	visitor visit: (TheoCParser2 parse: codeToParse).
+	self
+		assert: visitor aStream contents
+		equals:
+			'loadCompressedShapesegmentsleftFillsrightFillslineWidthslineFillsfillIndexListpointShort(firstIndexableField(points, interpreterProxy->interpreterState), nSegments, firstIndexableField(leftFills, interpreterProxy->interpreterState), firstIndexableField(rightFills, interpreterProxy->interpreterState), firstIndexableField(lineWidths, interpreterProxy->interpreterState), firstIndexableField(lineFills, interpreterProxy->interpreterState), firstIndexableField(fillIndexList, interpreterProxy->interpreterState), pointsShort);'
+]
 
-| codeToParse |
-self flag:#TODO.
-"Case not handled"
-codeToParse := 'foo(void)'.
+{ #category : #tests }
+ParserTheo2Test >> testVisitSimpleCallInIf [
 
-self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
-self deny: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
+| codeToParse selector visitor |
+codeToParse := 'if (failed()) {
+		return null;
+	}'.
+
+selector := OrderedCollection new.
+selector add: (Selector new selector: 'failed').
+visitor := PTCVisitor2CCallAdapter new.
+visitor aStream: String new writeStream.
+visitor selectorsToAdapt: selector.
+visitor visit: (TheoCParser2 parse: codeToParse).
+
+self assert: visitor aStream contents equals: 'if (failed(interpreterProxy->interpreterState)) {
+		return null;
+	}'
+
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testVisitSimpleCallWithReturnBefore [
+	| codeToParse selector visitor |
+	codeToParse := 'return primitiveFail();'.
+	selector := OrderedCollection new.
+	selector add: (Selector new selector: 'primitiveFail').
+	visitor := PTCVisitor2CCallAdapter new.
+	visitor aStream: String new writeStream.
+	visitor selectorsToAdapt: selector.
+	visitor visit: (TheoCParser2 parse: codeToParse).
+	self
+		assert: visitor aStream contents
+		equals:
+			'return primitiveFail(interpreterProxy->interpreterState);'
 ]

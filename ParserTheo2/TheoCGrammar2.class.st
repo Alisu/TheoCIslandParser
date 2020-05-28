@@ -18,7 +18,8 @@ Class {
 		'endStatement',
 		'argument',
 		'argumentChain',
-		'modifier'
+		'modifier',
+		'export'
 	],
 	#category : #ParserTheo2
 }
@@ -51,7 +52,7 @@ TheoCGrammar2 >> argument [
 "We do not parse nil (aka '()' ) because we do not encounter it in definition and it poses problem after "
 	| parser |
 	parser := (type
-		, #word asPParser plus) / type plus "/ nil asPParser".
+		, #word asPParser plus) / type plus / nil asPParser.
 	^ parser
 ]
 
@@ -104,6 +105,12 @@ TheoCGrammar2 >> endStatement [
 ]
 
 { #category : #accessing }
+TheoCGrammar2 >> export [
+
+^ ('EXPORT' asPParser, '(' asPParser, type, ')' asPParser, #blank asPParser star) flatten.
+]
+
+{ #category : #accessing }
 TheoCGrammar2 >> fonctionPointerDeclaration [
 	| parser |
 	parser := type optional, functionPointer
@@ -120,7 +127,7 @@ TheoCGrammar2 >> functionCall [
 { #category : #accessing }
 TheoCGrammar2 >> functionDeclaration [
 		| parser |
-	parser := "type optional," identifier
+	parser := (export / type), identifier
 		, arguments , endStatement.
 	^ parser.
 ]

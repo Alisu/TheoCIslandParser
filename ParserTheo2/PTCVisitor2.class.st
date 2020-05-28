@@ -82,10 +82,19 @@ PTCVisitor2 >> visitPTASTFunctionCall: anPTASTFunctionCall [
 
 { #category : #visiting }
 PTCVisitor2 >> visitPTASTFunctionDeclaration: anPTASTFunctionDeclaration [
-	self visit: anPTASTFunctionDeclaration type.
-	self visit: anPTASTFunctionDeclaration identifier.
-	self visit: anPTASTFunctionDeclaration arguments.
-	self visit: anPTASTFunctionDeclaration endStatement.
+
+	anPTASTFunctionDeclaration type type = 'return '
+		ifTrue: [ | return functionCall |
+			return := PTASTCrap new crap: anPTASTFunctionDeclaration type type.
+			functionCall := PTASTFunctionCall new
+				identifier: anPTASTFunctionDeclaration identifier;
+				arguments: anPTASTFunctionDeclaration arguments.
+			self visit: return.
+			self visit: functionCall ]
+		ifFalse: [ self visit: anPTASTFunctionDeclaration type.
+			self visit: anPTASTFunctionDeclaration identifier.
+			self visit: anPTASTFunctionDeclaration arguments ].
+	self visit: anPTASTFunctionDeclaration endStatement
 ]
 
 { #category : #visiting }

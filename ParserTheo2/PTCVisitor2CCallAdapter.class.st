@@ -148,7 +148,7 @@ PTCVisitor2CCallAdapter >> visitPTASTFonctionPointerDeclaration: aPTASTFonctionP
 { #category : #visiting }
 PTCVisitor2CCallAdapter >> visitPTASTFunctionCall: anPTASTFunctionCall [
 	<generated>
-	self halt.
+
 	super visitPTASTFunctionCall: anPTASTFunctionCall.
 	flag := false
 ]
