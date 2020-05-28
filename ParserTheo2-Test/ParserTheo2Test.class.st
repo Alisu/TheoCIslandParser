@@ -39,6 +39,18 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTA
 ]
 
 { #category : #tests }
+ParserTheo2Test >> testParseFunctionCallsInArgsAreFunctionCalls [
+
+| codeToParse firstFunctionCall |
+
+codeToParse := 'loadCompressedShapesegmentsleftFillsrightFillslineWidthslineFillsfillIndexListpointShort(firstIndexableField(points), nSegments, firstIndexableField(leftFills), firstIndexableField(rightFills), firstIndexableField(lineWidths), firstIndexableField(lineFills), firstIndexableField(fillIndexList), pointsShort);'.
+
+firstFunctionCall := (TheoCParser2 parse: codeToParse) cFile at: 1.
+self assert: (firstFunctionCall arguments arguments select: [ :e | e class = PTASTFunctionCall ]) size equals: 6.
+
+]
+
+{ #category : #tests }
 ParserTheo2Test >> testParsePreprocessorIntoCrap [
 
 | codeToParse |
@@ -78,6 +90,27 @@ codeToParse := 'foo()'.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionCall.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleCallInIf [
+
+| codeToParse selector visitor |
+codeToParse := 'if (failed()) {
+		return null;
+	}'.
+
+selector := OrderedCollection new.
+selector add: (Selector new selector: 'failed').
+visitor := PTCVisitor2CCallAdapter new.
+visitor aStream: String new writeStream.
+visitor selectorsToAdapt: selector.
+visitor visit: (TheoCParser2 parse: codeToParse).
+
+self assert: visitor aStream contents equals: 'if (failed(interpreterProxy->interpreterState)) {
+		return null;
+	}'
+
 ]
 
 { #category : #tests }
@@ -123,6 +156,16 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTA
 ]
 
 { #category : #tests }
+ParserTheo2Test >> testParseSimpleCallWithReturnBefore [
+	| codeToParse |
+	codeToParse := 'return primitiveFail();'.
+	self deny: (TheoCParser2 parse: codeToParse) cFile size equals: 1.
+	self
+		assert: ((TheoCParser2 parse: codeToParse) cFile at: 8) class
+		equals: PTASTFunctionCall
+]
+
+{ #category : #tests }
 ParserTheo2Test >> testParseSimpleDeclaration [
 
 | codeToParse |
@@ -130,6 +173,16 @@ codeToParse := 'sqInt classString(void);'.
 
 self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 1.
 self assert: (((TheoCParser2 parse: codeToParse) cFile at: 1) class) equals: PTASTFunctionDeclaration.
+]
+
+{ #category : #tests }
+ParserTheo2Test >> testParseSimpleDeclarationWithEXPORTBefore [
+
+| codeToParse |
+codeToParse := 'EXPORT(sqInt) moduleUnloaded(char *aModuleName);'.
+
+self assert: ((TheoCParser2 parse: codeToParse) cFile size) equals: 3.
+self assert: (((TheoCParser2 parse: codeToParse) cFile at: 3) class) equals: PTASTFunctionDeclaration.
 ]
 
 { #category : #tests }
