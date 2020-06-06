@@ -4,7 +4,7 @@ Extension { #name : #CCodeGenerator }
 CCodeGenerator >> emitCCodeOn: aStream doInlining: inlineFlag doAssertions: assertionFlag [
 	"Emit C code for all methods in the code base onto the given stream. All inlined method calls should already have been expanded."
 
-	| verbose methodList listOfSelector |
+	| verbose methodList listOfSelector array stream |
 	"method preparation"
 	verbose := false.
 	self prepareMethods.
@@ -35,6 +35,13 @@ CCodeGenerator >> emitCCodeOn: aStream doInlining: inlineFlag doAssertions: asse
     (aMethod isRealMethod 
         and: [ (self shouldGenerateMethod: aMethod)])]).
 
+array := listOfSelector collect: [ :e | e selector ].
+stream := String new writeStream.
+stream nextPutAll:'#('.
+array do: [:e | stream nextPut: $#; nextPutAll: e; nextPut: Character space ].
+stream nextPut: $).
+
+ self halt.
 	"PTCVisitorHFileAdapter adaptHFile: listOfSelector."
 	PTCVisitor2CCallAdapter adaptPluginFile: listOfSelector.
 	self halt.

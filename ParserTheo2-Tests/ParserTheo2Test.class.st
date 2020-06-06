@@ -41,6 +41,8 @@ self assert: (firstFunctionCall arguments arguments select: [ :e | e class = PTA
 { #category : #tests }
 ParserTheo2Test >> testParsePreprocessorIntoCrap [
 
+"Github or Pharo put anew cr instead of lf so crappy test"
+
 | codeToParse |
 codeToParse := '#include "config.h"
 #include <math.h>
@@ -57,7 +59,7 @@ self assert: (((TheoCParser2 parse: codeToParse) cFile at: 2) class) equals: PTA
 
 { #category : #tests }
 ParserTheo2Test >> testParsePreprocessorIntoCrap2 [
-
+"Github or Pharo put anew cr instead of lf so crappy test"
 | codeToParse code1 code2 |
 code1 := '/* Default EXPORT macro that does nothing (see comment in sq.h): */'.
 code2 :='#define EXPORT(returnType) returnType'.
